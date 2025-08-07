@@ -1,0 +1,97 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react-func", "jsdoc"],
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@next/next/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:storybook/recommended"
+  ],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jest": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/react-in-jsx-scope": 0,
+    "react/display-name": 0,
+    "react/prop-types": 0,
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/explicit-member-accessibility": 0,
+    "@typescript-eslint/indent": 0,
+    "@typescript-eslint/member-delimiter-style": 0,
+    "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/no-var-requires": 1,
+    "@typescript-eslint/no-use-before-define": 0,
+    "@typescript-eslint/no-unused-vars": [
+      2,
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": [
+      1,
+      {
+        "allow": ["info", "warn", "error"]
+      }
+    ],
+    "max-lines": [
+      "error",
+      {
+        "max": 300,
+        "skipComments": true
+      }
+    ],
+    "react-func/max-lines-per-function": [
+      "error",
+      {
+        "max": 50,
+        "skipComments": true
+      }
+    ],
+    "jsdoc/require-jsdoc": [
+      2,
+      {
+        "require": {
+          "ClassDeclaration": false,
+          "ClassExpression": false,
+          "ArrowFunctionExpression": true,
+          "FunctionDeclaration": true,
+          "FunctionExpression": true,
+          "MethodDefinition": false
+        },
+        "publicOnly": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.tsx", "instrumentation.ts"],
+      "rules": {
+        "jsdoc/require-jsdoc": 0
+      }
+    },
+    {
+      "files": ["*.spec.ts", "instrumentation.ts"],
+      "rules": {
+        "react-func/max-lines-per-function": 0
+      }
+    },
+    {
+      "files": ["*.stories.tsx"],
+      "rules": {
+        "react-func/max-lines-per-function": 0
+      }
+    }
+  ]
+}
