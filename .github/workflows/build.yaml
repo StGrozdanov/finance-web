@@ -1,0 +1,246 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  PATH_PREFIX: ${{ github.workspace }}
+  CACHE_PREFIX: ''
+
+jobs:
+  install_app:
+    name: Install
+    runs-on: ubuntu-latest
+    outputs:
+      cache-path: ${{ steps.app-cache.outputs.path }}
+      cache-key: ${{ steps.app-cache.outputs.key }}
+      cache-restore: ${{ steps.app-cache.outputs.restore }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+          cache: 'npm'
+          cache-dependency-path: ${{ env.PATH_PREFIX }}/package-lock.json
+      - name: Set cache outputs
+        id: app-cache
+        run: |
+          echo "path=${{ env.PATH_PREFIX }}/node_modules" >> $GITHUB_OUTPUT
+          echo "key=${{ format('{0}node_modules-{1}', env.CACHE_PREFIX, hashFiles(format('{0}/package-lock.json', env.PATH_PREFIX))) }}" >> $GITHUB_OUTPUT
+          echo "restore=${{ format('{0}node_modules-', env.CACHE_PREFIX) }}" >> $GITHUB_OUTPUT
+      - name: Cache dependencies
+        id: cache-dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.app-cache.outputs.path }}
+          key: ${{ steps.app-cache.outputs.key }}
+          restore-keys: ${{ steps.app-cache.outputs.restore }}
+      - name: Install dependencies
+        id: install
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Run post-install scripts
+        if: steps.install.outcome == 'success'
+        run: npm rebuild && npm run prepare --if-present
+
+  typecheck_app:
+    name: Typechecks
+    needs: [install_app]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+          cache: 'npm'
+          cache-dependency-path: ${{ env.PATH_PREFIX }}/package-lock.json
+      - name: Load dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PATH_PREFIX }}/node_modules
+          key: ${{ format('{0}node_modules-{1}', env.CACHE_PREFIX, hashFiles(format('{0}/package-lock.json', env.PATH_PREFIX))) }}
+      - name: Run type checks
+        run: npm run type-check
+
+  lint_app:
+    name: Linters
+    needs: [install_app]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory || github.workspace }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+          cache: 'npm'
+          cache-dependency-path: ${{ env.PATH_PREFIX }}/package-lock.json
+      - name: Load dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PATH_PREFIX }}/node_modules
+          key: ${{ format('{0}node_modules-{1}', env.CACHE_PREFIX, hashFiles(format('{0}/package-lock.json', env.PATH_PREFIX))) }}
+      - name: Run Linters
+        run: npm run lint
+
+  # unit_test_app:
+  #   name: Unit Tests
+  #   needs: [install_app]
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ${{ inputs.working-directory || github.workspace }}
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 22.18.0
+  #         cache: 'npm'
+  #         cache-dependency-path: ${{ env.PATH_PREFIX }}/package-lock.json
+  #     - name: Load dependencies
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ env.PATH_PREFIX }}/node_modules
+  #         key: ${{ format('{0}node_modules-{1}', env.CACHE_PREFIX, hashFiles(format('{0}/package-lock.json', env.PATH_PREFIX))) }}
+  #     - name: Run tests
+  #       run: npm run test:ci
+
+  # component_test_app:
+  #   name: 'Component Tests'
+  #   needs: [install_app]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 22.18.0
+  #         cache: 'npm'
+  #         cache-dependency-path: ${{ env.PATH_PREFIX }}/package-lock.json
+  #     - name: Load dependencies
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ env.PATH_PREFIX }}/node_modules
+  #         key: ${{ format('{0}node_modules-{1}', env.CACHE_PREFIX, hashFiles(format('{0}/package-lock.json', env.PATH_PREFIX))) }}
+  #     - name: Get installed Playwright version
+  #       id: playwright-version
+  #       run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('${{ env.PATH_PREFIX }}/package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+  #     - name: Cache playwright binaries
+  #       uses: actions/cache@v4
+  #       id: playwright-cache
+  #       with:
+  #         path: ~/.cache/ms-playwright
+  #         key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+  #     - name: Install Playwright
+  #       run: npx playwright install --with-deps
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #     - name: Build Storybook
+  #       run: npm run build-storybook --quiet
+  #       env:
+  #         NEXT_PUBLIC_PRE_LAUNCH_PRICE: true
+  #     - name: Run component tests
+  #       run: npm run component-tests:ci
+  #       env:
+  #         NEXT_PUBLIC_PRE_LAUNCH_PRICE: true
+
+  deploy_nonprod:
+    name: Deploy Nonprod
+    needs: [typecheck_app, lint_app]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: |
+          url="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
+          vercel alias --token=${{ secrets.VERCEL_TOKEN }} set "$url" digital-finance-app-non-prod.vercel.app
+
+  # e2e_test_app:
+  #   name: e2e tests
+  #   needs: [deploy_nonprod]
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   defaults:
+  #     run:
+  #       working-directory: ${{ inputs.working-directory || github.workspace }}
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 22.18.0
+  #         cache: 'npm'
+  #         cache-dependency-path: ${{ env.PATH_PREFIX }}/package-lock.json
+  #     - name: Load dependencies
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ${{ env.PATH_PREFIX }}/node_modules
+  #         key: ${{ format('{0}node_modules-{1}', env.CACHE_PREFIX, hashFiles(format('{0}/package-lock.json', env.PATH_PREFIX))) }}
+  #     - name: Get installed Playwright version
+  #       id: playwright-version
+  #       run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+  #     - name: Cache playwright binaries
+  #       uses: actions/cache@v4
+  #       id: playwright-cache
+  #       with:
+  #         path: ~/.cache/ms-playwright
+  #         key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+  #     - name: Install Playwright Browsers
+  #       run: npx playwright install --with-deps
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #     - name: Run tests
+  #       run: npm run test:e2e
+  #       env:
+  #         API_KEY: ${{ secrets.API_KEY }}
+  #         NEXT_PUBLIC_CURRENT_APP_ENV: preview
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: playwright-e2e-tests-report
+  #         path: playwright-report/
+  #         overwrite: true
+  #         retention-days: 15
+
+  deploy_prod:
+    name: Deploy Prod
+    needs: [deploy_nonprod]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: |
+          url="$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})"
+          vercel alias --token=${{ secrets.VERCEL_TOKEN }} set "$url" digital-finance-app.vercel.app
