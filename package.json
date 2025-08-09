@@ -19,23 +19,24 @@
     "*.@(scss|css)": "npm run code-format"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.30.0",
+    "next": "15.4.6",
     "react": "19.1.1",
-    "react-dom": "19.1.1",
-    "next": "15.4.6"
+    "react-dom": "19.1.1"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "24.2.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "eslint-plugin-jsdoc": "52.0.4",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-func": "0.1.18",
     "husky": "9.1.7",
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

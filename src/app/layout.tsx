@@ -1,6 +1,8 @@
-import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import { Inter, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
+
+import type { Metadata } from 'next';
 
 const interFont = Inter({
   subsets: ['latin'],
@@ -17,8 +19,9 @@ const sansFont = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: 'Stoyan Grozdanov',
-  description: 'Software Engineer',
+  title: 'Digital Finance',
+  description:
+    'The best investment tracking and portfolio management platform in the world.',
 };
 
 export default function RootLayout({
@@ -28,7 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' className={`${interFont.variable} ${sansFont.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ClerkProvider>{children}</ClerkProvider>
+      </body>
     </html>
   );
 }
