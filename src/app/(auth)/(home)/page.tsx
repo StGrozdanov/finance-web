@@ -1,9 +1,9 @@
 export default function Home() {
   return (
-    <div className='flex flex-col items-center justify-center h-screen'>
+    <article className='flex flex-col items-center justify-center h-screen'>
       <h1 className='text-4xl font-bold'>
-        Letzzz digitally finance those stuffffff
+        Lets digitally finance those stuff !!
       </h1>
-    </div>
+    </article>
   );
 }
