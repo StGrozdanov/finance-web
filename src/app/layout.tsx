@@ -1,5 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import { Inter, Source_Sans_3 } from 'next/font/google';
+import ViewportRedirect from './_components/ViewportRedirect/ViewportRedirect';
+
 import './globals.css';
 
 import type { Metadata } from 'next';
@@ -32,7 +34,10 @@ export default function RootLayout({
   return (
     <html lang='en' className={`${interFont.variable} ${sansFont.variable}`}>
       <body>
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider>
+          <ViewportRedirect />
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
