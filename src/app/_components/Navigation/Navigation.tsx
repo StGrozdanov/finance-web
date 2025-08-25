@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import SearchBar from '../SearchBar/SearchBar';
 import NotificationBell from '../Notification/Notification';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { mockAssets } from '@/app/_data/portfolioData';
 
 export type NotificationItem = {
   id: string;
@@ -42,7 +44,14 @@ const getNotifications = (): NotificationItem[] => {
   ];
 };
 
-export type AssetCategory = 'stock' | 'crypto';
+export type AssetCategory =
+  | 'stocks'
+  | 'crypto'
+  | 'indices'
+  | 'funds'
+  | 'commodities'
+  | 'nfts'
+  | 'cash';
 
 export type SearchAsset = {
   id: string;
@@ -53,63 +62,94 @@ export type SearchAsset = {
 };
 
 const getSearchHistory = (): SearchAsset[] => {
-  return [
-    {
-      id: 'aapl',
-      shortName: 'AAPL',
-      longName: 'Apple Inc.',
-      category: 'stock',
-      imageUrl: undefined,
-    },
-    {
-      id: 'tsla',
-      shortName: 'TSLA',
-      longName: 'Tesla, Inc.',
-      category: 'stock',
-      imageUrl: undefined,
-    },
-    {
-      id: 'nvda',
-      shortName: 'NVDA',
-      longName: 'NVIDIA Corporation',
-      category: 'stock',
-      imageUrl: undefined,
-    },
-    {
-      id: 'msft',
-      shortName: 'MSFT',
-      longName: 'Microsoft Corporation',
-      category: 'stock',
-      imageUrl: undefined,
-    },
-    {
-      id: 'amzn',
-      shortName: 'AMZN',
-      longName: 'Amazon.com, Inc.',
-      category: 'stock',
-      imageUrl: undefined,
-    },
-    {
-      id: 'btc',
-      shortName: 'BTC',
-      longName: 'Bitcoin',
-      category: 'crypto',
-      imageUrl: undefined,
-    },
-    {
-      id: 'eth',
-      shortName: 'ETH',
-      longName: 'Ethereum',
-      category: 'crypto',
-      imageUrl: undefined,
-    },
+  // Convert recent/popular assets from mockAssets to SearchAsset format
+  const popularAssets = [
+    'aapl',
+    'tsla',
+    'nvda',
+    'msft',
+    'amzn',
+    'googl',
+    'meta',
+    'btc',
+    'eth',
+    'sol',
+    'sp500',
+    'nasdaq',
+    'vti',
+    'gold',
   ];
+
+  return popularAssets
+    .map(assetId => {
+      const asset = mockAssets.find(a => a.id === assetId);
+      if (!asset) return null;
+
+      return {
+        id: asset.id,
+        shortName: asset.symbol,
+        longName: asset.name,
+        category: asset.type as AssetCategory,
+        imageUrl: asset.imageUrl,
+      };
+    })
+    .filter(Boolean) as SearchAsset[];
 };
 
 export default function Navigation() {
+  const router = useRouter();
   const notifications = getNotifications();
   const [searchHistory, setSearchHistory] =
     useState<SearchAsset[]>(getSearchHistory());
+
+  // Create searchable assets from all mockAssets
+  const allSearchableAssets = useMemo(() => {
+    return mockAssets.map(asset => ({
+      id: asset.id,
+      shortName: asset.symbol,
+      longName: asset.name,
+      category: asset.type as AssetCategory,
+      imageUrl: asset.imageUrl,
+    }));
+  }, []);
+
+  const handleSearch = (assetOrQuery: string | SearchAsset) => {
+    if (typeof assetOrQuery === 'string') {
+      // Text search - find matching asset
+      const query = assetOrQuery.toLowerCase().trim();
+      const matchingAsset = allSearchableAssets.find(
+        asset =>
+          asset.shortName.toLowerCase() === query ||
+          asset.longName.toLowerCase().includes(query),
+      );
+
+      if (matchingAsset) {
+        // Navigate to asset detail page
+        router.push(`/asset/${matchingAsset.id}`);
+
+        // Add to search history if not already there
+        setSearchHistory(prev => {
+          const exists = prev.some(item => item.id === matchingAsset.id);
+          if (!exists) {
+            return [matchingAsset, ...prev.slice(0, 13)]; // Keep max 14 items
+          }
+          return prev;
+        });
+      }
+    } else {
+      // Direct asset selection
+      router.push(`/asset/${assetOrQuery.id}`);
+
+      // Add to search history if not already there
+      setSearchHistory(prev => {
+        const exists = prev.some(item => item.id === assetOrQuery.id);
+        if (!exists) {
+          return [assetOrQuery, ...prev.slice(0, 13)]; // Keep max 14 items
+        }
+        return prev;
+      });
+    }
+  };
 
   return (
     <nav className='sticky top-0 z-2 h-16 flex items-center justify-between gap-4 px-3 py-2 border-b border-gray-200 bg-[var(--background)]'>
@@ -124,9 +164,7 @@ export default function Navigation() {
 
       <SearchBar
         history={searchHistory}
-        onSearch={q => {
-          console.log(`search submitted (query): ${q}`);
-        }}
+        onSearch={handleSearch}
         onClearHistory={() => {
           setSearchHistory([]);
         }}

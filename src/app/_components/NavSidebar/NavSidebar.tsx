@@ -7,6 +7,7 @@ import {
   faChartPie,
   faChartLine,
   faGear,
+  faStore,
 } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import SidebarItem from './modules/SidebarItem';
@@ -30,6 +31,11 @@ const navItems: NavItem[] = [
     href: '/following',
     label: 'Following',
     icon: faStar,
+  },
+  {
+    href: '/markets',
+    label: 'Markets',
+    icon: faStore,
   },
   { href: '/insights', label: 'Insights', icon: faChartLine },
   { href: '/settings', label: 'Settings', icon: faGear },

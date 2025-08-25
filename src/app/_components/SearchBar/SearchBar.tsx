@@ -121,6 +121,7 @@ export default function SearchBar({
             setQuery={setQuery}
             setIsOpen={setIsOpen}
             handleSubmit={handleSubmit}
+            query={query}
           />
         )}
       </section>

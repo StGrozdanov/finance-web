@@ -1,19 +1,44 @@
-import { TabKey } from '../page';
+import { AssetType } from '@/app/_data/portfolioData';
+
+type TabKey = 'overview' | AssetType;
 
 type PortfolioTabsProps = {
   active: TabKey;
   onChange: (k: TabKey) => void;
+  availableTabs: TabKey[];
+};
+
+const getTabLabel = (key: TabKey): string => {
+  if (key === 'overview') return 'Overview';
+
+  const assetType = key as AssetType;
+  switch (assetType) {
+    case 'crypto':
+      return 'Crypto';
+    case 'stocks':
+      return 'Stocks';
+    case 'indices':
+      return 'Indices';
+    case 'funds':
+      return 'Funds';
+    case 'commodities':
+      return 'Commodities';
+    case 'nfts':
+      return 'NFTs';
+    default:
+      return key.charAt(0).toUpperCase() + key.slice(1);
+  }
 };
 
 export default function PortfolioTabs({
   active,
   onChange,
+  availableTabs,
 }: PortfolioTabsProps) {
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'stocks', label: 'Stocks' },
-    { key: 'crypto', label: 'Crypto' },
-  ];
+  const tabs = availableTabs.map(key => ({
+    key,
+    label: getTabLabel(key),
+  }));
   return (
     <div className='flex w-full items-center justify-center gap-8'>
       {tabs.map(t => (

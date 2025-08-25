@@ -1,4 +1,4 @@
-import { Timeframe } from '@/app/(auth)/(home)/page';
+type Timeframe = '1H' | '1D' | '1W' | '1M' | 'YTD' | '1Y' | 'ALL';
 
 type TimeframePillsProps = {
   value: Timeframe;
