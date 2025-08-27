@@ -1,13 +1,13 @@
 'use client';
 
-import { assetTypeInfo } from '../../../utils/mockHoldingsData';
+import { assetTypeInfo } from '../../../../../../utils/mockHoldingsData';
 import {
   formatCurrency,
   formatChange,
   formatPercentage,
 } from '@/utils/formatters';
 
-import type { AssetType } from '../../../utils/mockHoldingsData';
+import type { AssetType } from '../../../../../../utils/mockHoldingsData';
 
 type CategoryCardProps = {
   type: AssetType | 'cash';

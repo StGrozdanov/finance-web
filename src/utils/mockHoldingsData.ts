@@ -22,7 +22,7 @@ export type TransferSource =
   | 'dividends_staking'
   | 'other_unknown';
 
-export interface Asset {
+export type Asset = {
   id: string;
   symbol: string;
   name: string;
@@ -30,9 +30,9 @@ export interface Asset {
   price: number;
   change24h: number;
   imageUrl?: string;
-}
+};
 
-export interface Transaction {
+export type Transaction = {
   id: string;
   assetId: string;
   type: TransactionType;
@@ -44,15 +44,15 @@ export interface Transaction {
   // Transfer specific fields
   from?: TransferSource;
   to?: TransferSource;
-}
+};
 
-export interface Portfolio {
+export type Portfolio = {
   id: string;
   name: string;
   createdAt: Date;
   transactions: Transaction[];
   isDemo: boolean;
-}
+};
 
 export const mockAssets: Asset[] = [
   // Crypto assets

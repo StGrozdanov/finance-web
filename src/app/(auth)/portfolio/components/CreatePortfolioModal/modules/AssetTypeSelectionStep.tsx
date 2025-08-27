@@ -1,8 +1,8 @@
 'use client';
 
-import { assetTypeInfo } from '../../../utils/mockHoldingsData';
+import { assetTypeInfo } from '../../../../../../utils/mockHoldingsData';
 
-import type { AssetType } from '../../../utils/mockHoldingsData';
+import type { AssetType } from '../../../../../../utils/mockHoldingsData';
 
 type AssetTypeSelectionStepProps = {
   onSelect: (assetType: AssetType) => void;

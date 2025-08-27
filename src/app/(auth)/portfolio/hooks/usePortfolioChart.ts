@@ -4,9 +4,9 @@ import {
   calculateAssetTypeValue,
   generateMockTimeSeries,
   getPortfolioAssetTypes,
-} from '../utils/portfolioSummary';
+} from '../../../../utils/portfolioSummary';
 
-import type { AssetType, Portfolio } from '../utils/mockHoldingsData';
+import type { AssetType, Portfolio } from '../../../../utils/mockHoldingsData';
 import type { Timeframe, TabKey } from '../page';
 
 type UsePortfolioChartParams = {

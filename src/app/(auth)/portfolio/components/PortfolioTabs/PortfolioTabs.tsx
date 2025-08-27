@@ -1,4 +1,4 @@
-import type { AssetType } from '../../utils/mockHoldingsData';
+import type { AssetType } from '../../../../../utils/mockHoldingsData';
 
 type TabKey = 'overview' | AssetType;
 

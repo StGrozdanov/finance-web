@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import PortfolioTabs from './_components/PortfolioTabs/PortfolioTabs';
+import PortfolioTabs from './components/PortfolioTabs/PortfolioTabs';
 import TimeframePills from '@/app/_components/TimeframePills/TimeframePills';
-import CreatePortfolioButton from './_components/CreatePortfolioButton/CreatePortfolioButton';
-import PortfolioHoldings from './_components/PortfolioHoldings/PortfolioHoldings';
+import CreatePortfolioButton from './components/CreatePortfolioButton/CreatePortfolioButton';
+import PortfolioHoldings from './components/PortfolioHoldings/PortfolioHoldings';
 import { usePortfolio } from '@/hooks/usePortfolioContext';
 import { usePortfolioChart } from './hooks/usePortfolioChart';
 import * as chartUtils from '@/utils/formatters';
 import { createApexOptions } from './utils/apexOptions';
 
-import type { AssetType } from './utils/mockHoldingsData';
+import type { AssetType } from '../../../utils/mockHoldingsData';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,

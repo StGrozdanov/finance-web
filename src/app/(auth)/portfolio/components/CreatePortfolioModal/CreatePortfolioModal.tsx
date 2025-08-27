@@ -6,7 +6,7 @@ import MethodSelectionStep from './modules/MethodSelectionStep';
 import AssetTypeSelectionStep from './modules/AssetTypeSelectionStep';
 import AssetSelectionStep from './modules/AssetSelectionStep';
 import TransactionFormStep from './modules/TransactionFormStep';
-import { demoPortfolio } from '../../utils/mockHoldingsData';
+import { demoPortfolio } from '../../../../../utils/mockHoldingsData';
 import { usePortfolio } from '@/hooks/usePortfolioContext';
 
 import type {
@@ -14,7 +14,7 @@ import type {
   Asset,
   TransactionType,
   Transaction,
-} from '../../utils/mockHoldingsData';
+} from '../../../../../utils/mockHoldingsData';
 
 export type ModalStep =
   | 'name'

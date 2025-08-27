@@ -8,7 +8,7 @@ import type {
   Transaction,
   TransactionType,
   TransferSource,
-} from '@/app/(auth)/portfolio/utils/mockHoldingsData';
+} from '@/utils/mockHoldingsData';
 
 type TransactionFormStepProps = {
   asset: Asset;

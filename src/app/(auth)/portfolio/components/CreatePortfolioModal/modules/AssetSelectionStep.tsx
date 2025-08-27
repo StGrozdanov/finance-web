@@ -3,15 +3,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { formatPrice } from '@/utils/formatters';
-import {
-  getPopularAssetsByType,
-  searchAssets,
-} from '@/app/(auth)/portfolio/utils/mockHoldingsData';
+import { getPopularAssetsByType, searchAssets } from '@/utils/mockHoldingsData';
 
-import type {
-  AssetType,
-  Asset,
-} from '@/app/(auth)/portfolio/utils/mockHoldingsData';
+import type { AssetType, Asset } from '@/utils/mockHoldingsData';
 
 type AssetSelectionStepProps = {
   assetType: AssetType;

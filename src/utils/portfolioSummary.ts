@@ -1,6 +1,6 @@
 import { Portfolio, Asset, AssetType, mockAssets } from './mockHoldingsData';
 
-export interface PortfolioAsset {
+export type PortfolioAsset = {
   asset: Asset;
   quantity: number;
   averagePrice: number;
@@ -8,9 +8,9 @@ export interface PortfolioAsset {
   totalInvested: number;
   unrealizedGain: number;
   unrealizedGainPercentage: number;
-}
+};
 
-export interface PortfolioSummary {
+type PortfolioSummary = {
   totalValue: number;
   totalInvested: number;
   totalUnrealizedGain: number;
@@ -18,7 +18,7 @@ export interface PortfolioSummary {
   assets: PortfolioAsset[];
   assetsByType: Record<AssetType, PortfolioAsset[]>;
   availableCash: number;
-}
+};
 
 export function calculatePortfolioSummary(
   portfolio: Portfolio,

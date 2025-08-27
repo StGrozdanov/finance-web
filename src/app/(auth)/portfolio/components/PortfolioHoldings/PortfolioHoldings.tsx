@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { usePortfolio } from '@/hooks/usePortfolioContext';
-import { calculatePortfolioSummary } from '../../utils/portfolioSummary';
-import { AssetType } from '../../utils/mockHoldingsData';
+import { calculatePortfolioSummary } from '../../../../../utils/portfolioSummary';
+import { AssetType } from '../../../../../utils/mockHoldingsData';
 import CategoryCard from './modules/CategoryCard';
 import AssetTable from './modules/AssetTable';
 import { TabKey, Timeframe } from '../../page';

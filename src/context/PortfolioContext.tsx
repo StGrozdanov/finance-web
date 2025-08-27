@@ -6,7 +6,7 @@ import {
   Transaction,
   demoPortfolio,
   mockAssets,
-} from '@/app/(auth)/portfolio/utils/mockHoldingsData';
+} from '@/utils/mockHoldingsData';
 
 type PortfolioContextType = {
   portfolios: Portfolio[];

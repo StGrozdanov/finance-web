@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import type { Timeframe } from '../../../page';
-import type { PortfolioAsset } from '../../../utils/portfolioSummary';
+import type { PortfolioAsset } from '../../../../../../utils/portfolioSummary';
 import {
   formatCurrency,
   formatQuantity,
