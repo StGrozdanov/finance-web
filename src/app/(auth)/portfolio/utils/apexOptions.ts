@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import * as chartUtils from './chartUtils';
+import * as chartUtils from '@/utils/formatters';
 
 import type { ApexOptions } from 'apexcharts';
 

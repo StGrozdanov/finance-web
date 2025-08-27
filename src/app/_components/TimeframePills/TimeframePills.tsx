@@ -1,29 +1,29 @@
-import { Timeframe } from '@/app/(auth)/(home)/page';
+import type { Timeframe } from '@/app/(auth)/portfolio/page';
 
 type TimeframePillsProps = {
   value: Timeframe;
-  onChange: (t: Timeframe) => void;
+  onChange: (timeframe: Timeframe) => void;
+  availableTimeframes: Timeframe[];
 };
 
 export default function TimeframePills({
   value,
   onChange,
+  availableTimeframes,
 }: TimeframePillsProps) {
-  const pills: Timeframe[] = ['1H', '1D', '1W', '1M', 'YTD', '1Y', 'ALL'];
-
   return (
     <div className='flex flex-wrap gap-2'>
-      {pills.map(p => (
+      {availableTimeframes.map(timeframe => (
         <button
-          key={p}
-          onClick={() => onChange(p)}
+          key={timeframe}
+          onClick={() => onChange(timeframe)}
           className={`rounded-full px-3 py-1 text-xs font-semibold cursor-pointer hover:bg-neutral-900 hover:text-white ${
-            value === p ?
+            value === timeframe ?
               'bg-neutral-900 text-white'
             : 'bg-neutral-200 text-neutral-700'
           }`}
         >
-          {p}
+          {timeframe}
         </button>
       ))}
     </div>
