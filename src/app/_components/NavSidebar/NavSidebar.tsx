@@ -9,7 +9,6 @@ import {
   faGear,
   faStore,
 } from '@fortawesome/free-solid-svg-icons';
-import { faStar } from '@fortawesome/free-regular-svg-icons';
 import SidebarItem from './modules/SidebarItem';
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -26,11 +25,6 @@ const navItems: NavItem[] = [
     href: '/portfolio',
     label: 'Portfolio',
     icon: faChartPie,
-  },
-  {
-    href: '/following',
-    label: 'Following',
-    icon: faStar,
   },
   {
     href: '/markets',

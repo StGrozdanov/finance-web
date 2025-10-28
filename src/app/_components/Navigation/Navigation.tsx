@@ -3,44 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import SearchBar from '../SearchBar/SearchBar';
-import NotificationBell from '../Notification/Notification';
 import { useState } from 'react';
-
-export type NotificationItem = {
-  id: string;
-  title: string;
-  description?: string;
-  timeAgo: string;
-  read: boolean;
-};
-
-const getNotifications = (): NotificationItem[] => {
-  return [
-    {
-      id: '1',
-      title:
-        "Don't forget: Apple's Dividend Ex-Date is on 11/08/2025, paying out USD 0.26",
-      description: undefined,
-      timeAgo: 'about 17 hours ago',
-      read: false,
-    },
-    {
-      id: '2',
-      title:
-        "Your account has been credited with $5.42 in interest payment for last month's balance",
-      description: undefined,
-      timeAgo: '8 days ago',
-      read: false,
-    },
-    {
-      id: '3',
-      title: '$TSLA just hit 338.0000',
-      description: undefined,
-      timeAgo: 'about a month ago',
-      read: true,
-    },
-  ];
-};
 
 export type AssetCategory = 'stock' | 'crypto';
 
@@ -107,12 +70,11 @@ const getSearchHistory = (): SearchAsset[] => {
 };
 
 export default function Navigation() {
-  const notifications = getNotifications();
   const [searchHistory, setSearchHistory] =
     useState<SearchAsset[]>(getSearchHistory());
 
   return (
-    <nav className='sticky top-0 z-2 h-16 flex items-center justify-between gap-4 px-3 py-2 border-b border-gray-200 bg-[var(--background)]'>
+    <nav className='sticky top-0 z-2 h-16 flex items-center px-3 py-2 border-b border-gray-200 bg-[var(--background)]'>
       <Link href='/'>
         <Image
           src='/digital-finance.png'
@@ -122,25 +84,17 @@ export default function Navigation() {
         />
       </Link>
 
-      <SearchBar
-        history={searchHistory}
-        onSearch={q => {
-          console.log(`search submitted (query): ${q}`);
-        }}
-        onClearHistory={() => {
-          setSearchHistory([]);
-        }}
-      />
-
-      <NotificationBell
-        items={notifications}
-        onMarkAllAsRead={() => {
-          console.log('all marked as read');
-        }}
-        onMarkAsRead={id => {
-          console.log(`notification with id: ${id} marked as read`);
-        }}
-      />
+      <div className='flex-1 justify-center'>
+        <SearchBar
+          history={searchHistory}
+          onSearch={q => {
+            console.log(`search submitted (query): ${q}`);
+          }}
+          onClearHistory={() => {
+            setSearchHistory([]);
+          }}
+        />
+      </div>
     </nav>
   );
 }
