@@ -36,7 +36,7 @@ export default function CategoryCard({
   return (
     <button
       onClick={onClick}
-      className='w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors text-left'
+      className='w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors text-left cursor-pointer'
     >
       <div className='flex items-center justify-between mb-3'>
         <div className='flex items-center gap-3'>

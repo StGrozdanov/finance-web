@@ -134,7 +134,7 @@ export default function CreatePortfolioModal({
         <div className='relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6'>
           <button
             onClick={handleClose}
-            className='absolute right-4 top-4 text-gray-400 hover:text-gray-600'
+            className='absolute right-4 top-4 text-gray-400 hover:text-gray-600 cursor-pointer'
           >
             <svg
               className='h-6 w-6'
@@ -155,7 +155,7 @@ export default function CreatePortfolioModal({
             !(mode === 'add_transaction' && step === 'method') && (
               <button
                 onClick={handleBack}
-                className='absolute left-4 top-4 text-gray-400 hover:text-gray-600'
+                className='absolute left-4 top-4 text-gray-400 hover:text-gray-600 cursor-pointer'
               >
                 <svg
                   className='h-6 w-6'

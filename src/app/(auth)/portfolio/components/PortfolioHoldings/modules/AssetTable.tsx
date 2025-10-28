@@ -92,7 +92,7 @@ export default function AssetTable({ assets, timeframe }: AssetTableProps) {
               const isPositivePL = unrealizedGain >= 0;
 
               return (
-                <tr key={asset.id} className='hover:bg-gray-50'>
+                <tr key={asset.id} className='hover:bg-gray-50 cursor-pointer'>
                   <td className='px-6 py-4 whitespace-nowrap'>
                     <Link
                       href={`/asset/${asset.id}`}

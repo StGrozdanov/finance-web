@@ -18,7 +18,7 @@ export default function CreatePortfolioButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className='fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 transition-colors duration-200 hover:shadow-xl'
+        className='fixed bottom-6 right-6 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 transition-colors duration-200 hover:shadow-xl'
         aria-label={
           mode === 'add_transaction' ? 'Add transaction' : 'Create portfolio'
         }
