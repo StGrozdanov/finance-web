@@ -5,10 +5,13 @@
 /**
  * Formats a number as currency using USD locale
  */
-export const formatCurrency = (amount: number): string => {
+export const formatCurrency = (
+  amount: number,
+  currency: string = 'USD',
+): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);

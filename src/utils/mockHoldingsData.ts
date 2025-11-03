@@ -385,6 +385,36 @@ export const demoPortfolio: Portfolio = {
   createdAt: new Date('2024-01-01'),
   isDemo: true,
   transactions: [
+    {
+      id: 'demo-0',
+      assetId: 'usd',
+      type: 'deposit',
+      amount: 100000,
+      price: 1,
+      fee: 0,
+      date: new Date('2024-01-01'),
+      notes: 'USD cash deposit',
+    },
+    {
+      id: 'demo-01',
+      assetId: 'usd',
+      type: 'withdrawal',
+      amount: 20000,
+      price: 1,
+      fee: 0,
+      date: new Date('2024-06-01'),
+      notes: 'USD cash transfer',
+    },
+    {
+      id: 'demo-02',
+      assetId: 'eur',
+      type: 'deposit',
+      amount: 1000,
+      price: 1,
+      fee: 0,
+      date: new Date('2024-01-05'),
+      notes: 'USD cash deposit',
+    },
     // Crypto transactions
     {
       id: 'demo-1',

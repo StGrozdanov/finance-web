@@ -93,7 +93,75 @@ export function calculatePortfolioSummary(
 
   let totalValue = 0;
   let totalInvested = 0;
-  let availableCash = 0;
+
+  // Calculate available cash from all transactions
+  type CashFlow = {
+    assetId: string;
+    type: 'deposit' | 'withdrawal';
+    amount: number;
+  };
+
+  const cashTransactions: CashFlow[] = portfolio.transactions.flatMap(t => {
+    // Pass through explicit cash deposits/withdrawals
+    if (t.assetId === 'usd' || t.assetId === 'eur') {
+      return [
+        {
+          assetId: t.assetId,
+          type: t.type as 'deposit' | 'withdrawal',
+          amount: t.amount,
+        },
+      ];
+    }
+    // Derive USD cash flow for buys (payment + fee)
+    if (t.type === 'buy' && t.price) {
+      const amountOut = t.amount * t.price + (t.fee || 0);
+      return [
+        {
+          assetId: 'usd',
+          type: 'withdrawal' as const,
+          amount: amountOut,
+        },
+      ];
+    }
+    // Derive USD cash flow for sells (proceeds - fee)
+    if (t.type === 'sell' && t.price) {
+      const amountIn = t.amount * t.price - (t.fee || 0);
+      return [
+        {
+          assetId: 'usd',
+          type: 'deposit' as const,
+          amount: amountIn,
+        },
+      ];
+    }
+    return [];
+  });
+
+  const usdTransactions = cashTransactions.filter(t => t.assetId === 'usd');
+  const eurTransactions = cashTransactions.filter(t => t.assetId === 'eur');
+
+  const usdBalance = Math.max(
+    0,
+    usdTransactions.reduce((sum, t) => {
+      if (t.type === 'deposit') return sum + t.amount;
+      if (t.type === 'withdrawal') return sum - t.amount;
+      return sum;
+    }, 0),
+  );
+
+  const eurBalance = Math.max(
+    0,
+    eurTransactions.reduce((sum, t) => {
+      if (t.type === 'deposit') return sum + t.amount;
+      if (t.type === 'withdrawal') return sum - t.amount;
+      return sum;
+    }, 0),
+  );
+
+  const availableCash = Math.max(0, usdBalance + eurBalance * 1.08);
+
+  // Track cash value from holdings to avoid double counting
+  let cashValueFromHoldings = 0;
 
   assetHoldings.forEach((holding, assetId) => {
     if (holding.quantity <= 0) return; // Skip assets with zero or negative holdings
@@ -121,12 +189,12 @@ export function calculatePortfolioSummary(
 
     // Handle cash assets separately
     if (asset.type === 'cash') {
-      availableCash += currentValue;
       if (includeCash) {
         assets.push(portfolioAsset);
         assetsByType[asset.type].push(portfolioAsset);
         totalValue += currentValue;
         totalInvested += holding.totalInvested;
+        cashValueFromHoldings += currentValue;
       }
     } else {
       assets.push(portfolioAsset);
@@ -136,9 +204,10 @@ export function calculatePortfolioSummary(
     }
   });
 
-  // Add mock cash for demonstration if no cash transactions exist
-  if (availableCash === 0) {
-    availableCash = 3270.32;
+  // Add available cash to total value when includeCash is true
+  // Subtract cash from holdings to avoid double counting
+  if (includeCash) {
+    totalValue += availableCash - cashValueFromHoldings;
   }
 
   const totalUnrealizedGain = totalValue - totalInvested;

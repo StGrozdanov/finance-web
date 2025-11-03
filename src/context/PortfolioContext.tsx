@@ -18,6 +18,12 @@ type PortfolioContextType = {
     portfolioId: string,
     transaction: Omit<Transaction, 'id'>,
   ) => void;
+  updateTransaction: (
+    portfolioId: string,
+    transactionId: string,
+    transaction: Omit<Transaction, 'id'>,
+  ) => void;
+  deleteTransaction: (portfolioId: string, transactionId: string) => void;
   setActivePortfolio: (portfolioId: string) => void;
   setIncludeCashInPortfolio: (include: boolean) => void;
   getActivePortfolio: () => Portfolio;
@@ -104,6 +110,45 @@ export function PortfolioProvider({ children }: PortfolioProviderProps) {
     );
   };
 
+  const updateTransaction = (
+    portfolioId: string,
+    transactionId: string,
+    transactionData: Omit<Transaction, 'id'>,
+  ) => {
+    setPortfolios(prev =>
+      prev.map(portfolio =>
+        portfolio.id === portfolioId ?
+          {
+            ...portfolio,
+            transactions: portfolio.transactions.map(t =>
+              t.id === transactionId ?
+                {
+                  ...transactionData,
+                  id: transactionId,
+                }
+              : t,
+            ),
+          }
+        : portfolio,
+      ),
+    );
+  };
+
+  const deleteTransaction = (portfolioId: string, transactionId: string) => {
+    setPortfolios(prev =>
+      prev.map(portfolio =>
+        portfolio.id === portfolioId ?
+          {
+            ...portfolio,
+            transactions: portfolio.transactions.filter(
+              t => t.id !== transactionId,
+            ),
+          }
+        : portfolio,
+      ),
+    );
+  };
+
   const setActivePortfolio = (portfolioId: string) => {
     setActivePortfolioId(portfolioId);
   };
@@ -119,6 +164,8 @@ export function PortfolioProvider({ children }: PortfolioProviderProps) {
     includeCashInPortfolio,
     createPortfolio,
     addTransaction,
+    updateTransaction,
+    deleteTransaction,
     setActivePortfolio,
     setIncludeCashInPortfolio,
     getActivePortfolio,
